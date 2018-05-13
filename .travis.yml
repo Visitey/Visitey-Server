@@ -1,0 +1,20 @@
+# blocklist
+branches:
+  except:
+  - legacy
+  - experimental
+
+# safelist
+branches:
+  only:
+  - master
+  - stable
+  - dev
+
+language: python
+
+python:
+  - 3.6.5
+
+script:
+  - coverage run test.py
