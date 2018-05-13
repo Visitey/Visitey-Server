@@ -20,4 +20,4 @@ python:
   - 3.6.5
 
 script:
-  - coverage run test.py
+  - pipenv run coverage run test.py
