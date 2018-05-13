@@ -23,5 +23,7 @@ python:
 install:
   - pip install pipenv
 
-script:
-  - python test.py
+jobs:
+  include:
+    stage: Unit tests
+    script: python test.py
