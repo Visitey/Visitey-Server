@@ -1,5 +1,5 @@
 def myTest():
-    print("salut")
+    print("Here is my test")
     return 0
 
 
