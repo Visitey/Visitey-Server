@@ -1,19 +1,30 @@
 [[source]]
-
-name = "pypi"
-verify_ssl = true
 url = "https://pypi.python.org/simple"
-
+verify_ssl = true
+name = "pypi"
 
 [packages]
-
-coverage = "*"
-
+Django = "*"
+gunicorn = "*"
+django-heroku = "*"
+certifi = "*"
+drf-yasg = "*"
+django-allauth = "*"
+django-filter = "*"
+django-rest-auth = "*"
+djangorestframework = "*"
+djangorestframework-jwt = "*"
+request = "*"
+whitenoise = "*"
+django-taggit = "*"
+django-taggit-serializer = "*"
+django-silk = "*"
+drf-friendly-errors = "*"
+django-extra-fields = "*"
+django-cors-headers = "*"
+pillow = "*"
 
 [dev-packages]
 
-
-
 [requires]
-
-python_version = "3.5"
+python_version = "3.6"
