@@ -17,4 +17,4 @@ python:
   - 3.6.5
 
 script:
-  - coverage run test.py
+  - run test.py
