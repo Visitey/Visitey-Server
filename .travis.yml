@@ -25,5 +25,5 @@ install:
 
 jobs:
   include:
-    stage: Unit tests
-    script: python test.py
+    - stage: Unit tests
+      script: python test.py
