@@ -12,7 +12,7 @@ branches:
   - dev
 
 install:
-  - pipenv install
+  - pip install -r requirements.txt
 
 language: python
 
