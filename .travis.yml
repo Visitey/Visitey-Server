@@ -11,10 +11,13 @@ branches:
   - stable
   - dev
 
+install:
+  - pipenv install
+
 language: python
 
 python:
   - 3.6.5
 
 script:
-  - run test.py
+  - coverage run test.py
