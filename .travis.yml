@@ -11,13 +11,13 @@ branches:
   - stable
   - dev
 
-install:
-  - pip install -r requirements.txt
-
 language: python
 
 python:
   - 3.6.5
 
+install:
+  - pip install -r requirements.txt
+
 script:
-  - pipenv run coverage run test.py
+  - coverage run test.py
