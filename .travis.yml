@@ -13,7 +13,7 @@ branches:
   only:
   - master
   - stable
-  - dev
+  - develop
 
 language: python
 
