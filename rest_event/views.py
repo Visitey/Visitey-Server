@@ -1,7 +1,7 @@
 from django.contrib.gis.geos import fromstr
 from django.contrib.gis.measure import Distance
 from django.utils import timezone
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 
 from rest_event.models import Event
 from rest_event.serializers import EventSerializer
@@ -15,13 +15,15 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         """
-                Optionally restricts the returned purchases to a given user,
-                by filtering against query parameter in the URL.
-                """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against query parameter in the URL.
+        """
+
+        #TODO DOCSTRING QUERYPARAM
+
         radius = self.request.query_params.get('radius', None)
         lng = self.request.query_params.get('lng', None)
         lat = self.request.query_params.get('lat', None)
@@ -52,4 +54,4 @@ class EventViewSet(viewsets.ModelViewSet):
             # mindurationleft
             return events
         else:
-            return Event.objects.all()
+            return Event.objects.filter(owners__owner=self.request.user)

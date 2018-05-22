@@ -37,9 +37,9 @@ JWT_AUTH = {
 # Make JWT Auth the default authentication mechanism for Django
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -84,8 +84,6 @@ INSTALLED_APPS = [
     # EXTERNAL APP
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
-    'rest_auth.registration',
     'corsheaders',
     'drf_yasg',
     'allauth',
@@ -104,8 +102,10 @@ INSTALLED_APPS = [
     'rest_event.apps.RestEventConfig',
     'rest_social.apps.RestSocialConfig',
     'rest_htags.apps.RestHtagsConfig',
-    'rest_chat.apps.RestChatConfig',
     'rest_friendship.apps.RestFriendshipConfig',
+    'rest_chat.apps.RestChatConfig',
+    'rest_auth',
+    'rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -119,7 +119,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'rest_chat.middleware.MessagingMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -197,7 +196,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-REST_SESSION_LOGIN = False
+REST_SESSION_LOGIN = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
@@ -233,8 +232,8 @@ WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# DATABASES['default'] = dj_database_url.config()
-# DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+#DATABASES['default'] = dj_database_url.config()
+#DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')

@@ -14,13 +14,13 @@ class Profile(models.Model):
     img = models.ImageField(max_length=None, null=True, blank=True)
     desc = models.TextField(max_length=100, default='', blank=True)
     gender = models.CharField(max_length=100, default='male', blank=True)
-    birthdate = models.DateField('birthdate', default=timezone.now)
+    birthdate = models.DateTimeField('birthdate', default=timezone.now)
     phone_number = models.CharField(max_length=100, default='', blank=True)
     relationship = models.CharField(max_length=100, default='', blank=True)
     rank = models.IntegerField(default=0)
     blacklist = models.ManyToManyField('self', default=None)
 
-    #joinMe
+    # joinMe
     # music
     def __str__(self):
         return self.owner.username

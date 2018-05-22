@@ -33,7 +33,7 @@ class ProfileSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModel
 
 
 class UserDetailsSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
-    profile = ProfileSerializer(many=False, read_only=True)
+    profile = ProfileSerializer(many=False)
 
     class Meta:
         model = UserModel

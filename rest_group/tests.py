@@ -1,14 +1,8 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from django.core.cache import cache
 from django.test import TestCase, RequestFactory
 from django.utils.http import urlencode
 from rest_framework.reverse import reverse
-
-from rest_group.models import Group
-from rest_group.serializers import GroupSerializer
 
 
 # Create your tests here.
@@ -87,6 +81,7 @@ class BaseTestCase(TestCase):
     def assertResponse404(self, response):
         self.assertEqual(response.status_code, 404)
 
-class GroupModelTests(BaseTestCase):
-    ### Create a group with all users
 
+class GroupModelTests(BaseTestCase):
+### Create a group with all users
+    pass

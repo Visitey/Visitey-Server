@@ -1,21 +1,26 @@
-# coding=utf8
-# -*- coding: utf8 -*-
-# vim: set fileencoding=utf8 :
-
-from __future__ import unicode_literals
 from rest_framework import serializers
-from rest_chat.compat import compat_serializer_attr, compat_serializer_method_field
-from rest_chat.models import Message, NotificationCheck, Thread
+from rest_framework_friendly_errors.mixins import FriendlyErrorMessagesMixin
+
+from rest_chat.models import Message, NotificationCheck, Thread, Participant
+from rest_profile.models import Profile
 
 
-class ThreadSerializer(serializers.ModelSerializer):
+class ParticipantSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+    owner = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail', queryset=Profile.objects.all())
 
-    participants = compat_serializer_method_field("get_participants")
-    removable_participants_ids = compat_serializer_method_field("get_removable_participants_ids")
+    class Meta:
+        model = Participant
+        fields = '__all__'
+
+
+class ThreadSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+    participants = serializers.HyperlinkedRelatedField(many=True, view_name='profile-detail',
+                                                       queryset=Profile.objects.all())
+    removable_participants_ids = serializers.SerializerMethodField()
 
     class Meta:
         model = Thread
-        fields = ('id', 'name', 'participants', 'removable_participants_ids')
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         # Don't pass the 'callback' arg up to the superclass
@@ -46,9 +51,8 @@ class SimpleMessageSerializer(serializers.ModelSerializer):
 
 
 class ComplexMessageSerializer(serializers.ModelSerializer):
-
-    is_notification = compat_serializer_method_field("get_is_notification")
-    readers = compat_serializer_method_field("get_readers")
+    is_notification = serializers.SerializerMethodField()
+    readers = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -57,7 +61,7 @@ class ComplexMessageSerializer(serializers.ModelSerializer):
     def get_is_notification(self, obj):
         """ We say if the message should trigger a notification """
         try:
-            o = compat_serializer_attr(self, obj)
+            o = obj
             return o.is_notification
         except Exception:
             return False
@@ -65,13 +69,13 @@ class ComplexMessageSerializer(serializers.ModelSerializer):
     def get_readers(self, obj):
         """ Return the ids of the people who read the message instance. """
         try:
-            o = compat_serializer_attr(self, obj)
+            o = obj
             return o.readers
         except Exception:
             return []
 
 
 class MessageNotificationCheckSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = NotificationCheck
+        fields = '__all__'

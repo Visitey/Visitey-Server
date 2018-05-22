@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from rest_friendship.exceptions import AlreadyExistsError, AlreadyFriendsError
@@ -65,7 +64,6 @@ def bust_cache(type, user_pk):
     cache.delete_many(keys)
 
 
-@python_2_unicode_compatible
 class FriendshipRequest(models.Model):
     """ Model to represent friendship requests """
     from_user = models.ForeignKey(Profile, related_name='friendship_requests_sent', on_delete=models.CASCADE)
@@ -337,7 +335,6 @@ class FriendshipManager(models.Manager):
                 return False
 
 
-@python_2_unicode_compatible
 class Friend(models.Model):
     """ Model to represent Friendships """
     to_user = models.ForeignKey(Profile, related_name='friends', on_delete=models.CASCADE)
@@ -438,7 +435,6 @@ class FollowingManager(models.Manager):
                 return False
 
 
-@python_2_unicode_compatible
 class Follow(models.Model):
     """ Model to represent Following relationships """
     follower = models.ForeignKey(Profile, related_name='following', on_delete=models.CASCADE)

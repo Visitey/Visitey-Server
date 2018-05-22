@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.test import TestCase, RequestFactory
 from django.utils.http import urlencode
 from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
 
 from rest_friendship.exceptions import AlreadyExistsError, AlreadyFriendsError
 from rest_friendship.models import Friend, Follow, FriendshipRequest
@@ -51,6 +52,7 @@ class BaseTestCase(TestCase):
         self.user_susan = self.create_user('susan', 'susan@susan.com', self.user_pw)
         self.user_amy = self.create_user('amy', 'amy@amy.amy.com', self.user_pw)
         self.factory = RequestFactory()
+        self.client = APIClient()
         cache.clear()
 
     def tearDown(self):
@@ -264,12 +266,13 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            response = self.client.get(url)
-            friends = Friend.objects.friends(self.user_bob.profile)
-            serializer = FriendshipSerializer(friends, many=True)
-            self.assertEqual(response.data, serializer.data)
-            self.assertResponse200(response)
+        self.client.force_authenticate(self.user_bob)
+        response = self.client.get(url)
+        friends = Friend.objects.friends(self.user_bob.profile)
+        serializer = FriendshipSerializer(friends, many=True)
+        self.assertEqual(response.data, serializer.data)
+        self.assertResponse200(response)
+        self.client.force_authenticate()
 
     def test_friendship_add_friend(self):
         url = reverse_querystring('friend-add-friend', query_kwargs={'username': self.user_amy.username})
@@ -279,23 +282,26 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.post(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST send a friendship request to `username` in query params
-            response = self.client.post(url)
-            req = self.factory.post(url)
-            requests = Friend.objects.sent_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertResponse202(response)
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_bob)
+        # on POST send a friendship request to `username` in query params
+        response = self.client.post(url)
+        req = self.factory.post(url)
+        requests = Friend.objects.sent_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertResponse202(response)
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
         url = reverse('friendshiprequest-list')
-        with self.login(self.user_amy.username, self.user_pw):
-            # the `username` receive a friend request
-            response = self.client.get(url)
-            req = self.factory.post(url)
-            requests = Friend.objects.unrejected_requests(self.user_amy.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_amy)
+        # the `username` receive a friend request
+        response = self.client.get(url)
+        req = self.factory.post(url)
+        requests = Friend.objects.unrejected_requests(self.user_amy.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertResponse200(response)
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_add_friend_dupe(self):
         url = reverse_querystring('friend-add-friend', query_kwargs={'username': self.user_amy.username})
@@ -305,27 +311,29 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.post(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST send a friendship request to `username` in query params
-            response = self.client.post(url)
-            req = self.factory.post(url)
-            requests = Friend.objects.sent_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertResponse202(response)
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_bob)
+        # on POST send a friendship request to `username` in query params
+        response = self.client.post(url)
+        req = self.factory.post(url)
+        requests = Friend.objects.sent_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertResponse202(response)
+        self.assertEqual(response.data, serializer.data)
 
-            response = self.client.post(url)
-            self.assertResponse400(response)
-            self.assertEqual(response.data, {'code': 5001, 'message': 'Friendship request already exist'})
+        response = self.client.post(url)
+        self.assertResponse400(response)
+        self.assertEqual(response.data, {'code': 5001, 'message': 'Friendship request already exist'})
+        self.client.force_authenticate()
 
         url = reverse('friendshiprequest-list')
-        with self.login(self.user_amy.username, self.user_pw):
-            # the `username` receive a friend request
-            response = self.client.get(url)
-            req = self.factory.post(url)
-            requests = Friend.objects.unrejected_requests(self.user_amy.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_amy)
+        # the `username` receive a friend request
+        response = self.client.get(url)
+        req = self.factory.post(url)
+        requests = Friend.objects.unrejected_requests(self.user_amy.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_requests(self):
         url = reverse('friendshiprequest-list')
@@ -334,13 +342,14 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            requests = Friend.objects.unrejected_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_bob)
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        requests = Friend.objects.unrejected_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_requests_rejected(self):
         url = reverse_querystring('friendshiprequest-list', query_kwargs={'rejected': 'true'})
@@ -349,13 +358,14 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            requests = Friend.objects.rejected_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_bob)
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        requests = Friend.objects.rejected_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_accept(self):
         url = reverse_querystring('friendshiprequest-accept-request',
@@ -365,29 +375,31 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.post(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_steve.username, self.user_pw):
-            # on POST try to accept the friendship request
-            # but I am logged in as Steve, so I cannot accept
-            # a request sent to Bob
-            response = self.client.post(url)
-            self.assertResponse404(response)
+        self.client.force_authenticate(self.user_steve)
+        # on POST try to accept the friendship request
+        # but I am logged in as Steve, so I cannot accept
+        # a request sent to Bob
+        response = self.client.post(url)
+        self.assertResponse404(response)
+        self.client.force_authenticate()
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST accept the friendship request
-            # and delete it
+        self.client.force_authenticate(self.user_bob)
+        # on POST accept the friendship request
+        # and delete it
 
-            response = self.client.post(url)
-            self.assertResponse202(response)
-            self.assertEqual(response.data, {'message': 'Request accepted'})
+        response = self.client.post(url)
+        self.assertResponse202(response)
+        self.assertEqual(response.data, {'message': 'Request accepted'})
 
-            # Test if request is well deleted
-            url = reverse_querystring('friendshiprequest-list')
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            requests = Friend.objects.unrejected_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        # Test if request is well deleted
+        url = reverse_querystring('friendshiprequest-list')
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        requests = Friend.objects.unrejected_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_reject(self):
         url = reverse_querystring('friendshiprequest-reject-request',
@@ -397,28 +409,30 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.post(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_steve.username, self.user_pw):
-            # on POST try to reject the friendship request
-            # but I am logged in as Steve, so I cannot reject
-            # a request sent to Bob
-            response = self.client.post(url)
-            self.assertResponse404(response)
+        self.client.force_authenticate(self.user_steve)
+        # on POST try to reject the friendship request
+        # but I am logged in as Steve, so I cannot reject
+        # a request sent to Bob
+        response = self.client.post(url)
+        self.assertResponse404(response)
+        self.client.force_authenticate()
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST reject the friendship request
-            # and add it to rejected requests
-            response = self.client.post(url)
-            self.assertResponse202(response)
-            self.assertEqual(response.data, {'message': 'Request rejected'})
+        self.client.force_authenticate(self.user_bob)
+        # on POST reject the friendship request
+        # and add it to rejected requests
+        response = self.client.post(url)
+        self.assertResponse202(response)
+        self.assertEqual(response.data, {'message': 'Request rejected'})
 
-            # Test if request is well rejected
-            url = reverse_querystring('friendshiprequest-list', query_kwargs={'rejected': 'true'})
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            requests = Friend.objects.rejected_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        # Test if request is well rejected
+        url = reverse_querystring('friendshiprequest-list', query_kwargs={'rejected': 'true'})
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        requests = Friend.objects.rejected_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_cancel(self):
         url = reverse_querystring('friendshiprequest-cancel-request',
@@ -428,28 +442,31 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST try to cancel the friendship request
-            # but I am logged in as Bob, so I cannot cancel
-            # a request made by Steve
-            response = self.client.post(url)
-            self.assertResponse404(response)
+        self.client.force_authenticate(self.user_bob)
+        # on POST try to cancel the friendship request
+        # but I am logged in as Bob, so I cannot cancel
+        # a request made by Steve
+        response = self.client.post(url)
+        self.assertResponse404(response)
+        self.client.force_authenticate()
 
-        with self.login(self.user_steve.username, self.user_pw):
-            # on POST cancel the friendship request
-            response = self.client.post(url)
-            self.assertResponse202(response)
-            self.assertEqual(response.data, {'message': 'Request cancelled'})
+        self.client.force_authenticate(self.user_steve)
+        # on POST cancel the friendship request
+        response = self.client.post(url)
+        self.assertResponse202(response)
+        self.assertEqual(response.data, {'message': 'Request cancelled'})
+        self.client.force_authenticate()
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # Check if request is well canceled
-            url = reverse_querystring('friendshiprequest-list')
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            requests = Friend.objects.unrejected_requests(self.user_bob.profile)
-            serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate(self.user_bob)
+        # Check if request is well canceled
+        url = reverse_querystring('friendshiprequest-list')
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        requests = Friend.objects.unrejected_requests(self.user_bob.profile)
+        serializer = FriendshipRequestSerializer(requests, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.client.force_authenticate()
 
     def test_friendship_followers(self):
         url = reverse_querystring('follow-list')
@@ -458,12 +475,13 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            response = self.client.get(url)
-            followers = Follow.objects.followers(self.user_bob.profile)
-            serializer = FollowSerializer(followers, many=True)
-            self.assertEqual(response.data, serializer.data)
-            self.assertResponse200(response)
+        self.client.force_authenticate(self.user_bob)
+        response = self.client.get(url)
+        followers = Follow.objects.followers(self.user_bob.profile)
+        serializer = FollowSerializer(followers, many=True)
+        self.assertEqual(response.data, serializer.data)
+        self.assertResponse200(response)
+        self.client.force_authenticate()
 
     def test_friendship_following(self):
         url = reverse_querystring('follow-list', query_kwargs={'following': 'true'})
@@ -472,14 +490,15 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST
-            response = self.client.get(url)
-            req = self.factory.get(url)
-            follows = Follow.objects.filter(follower=self.user_bob.profile).all()
-            serializer = FollowSerializer(follows, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
-            self.assertResponse200(response)
+        self.client.force_authenticate(self.user_bob)
+        # on POST
+        response = self.client.get(url)
+        req = self.factory.get(url)
+        follows = Follow.objects.filter(follower=self.user_bob.profile).all()
+        serializer = FollowSerializer(follows, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
+        self.assertResponse200(response)
+        self.client.force_authenticate()
 
     def test_follower_add(self):
         url = reverse_querystring('follow-add-follow', query_kwargs={'username': self.user_susan.username})
@@ -488,24 +507,25 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.post(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST follow user `username`
-            response = self.client.post(url)
-            self.assertResponse202(response)
-            self.assertEqual(response.data, {'message': 'Follower added'})
+        self.client.force_authenticate(self.user_bob)
+        # on POST follow user `username`
+        response = self.client.post(url)
+        self.assertResponse202(response)
+        self.assertEqual(response.data, {'message': 'Follower added'})
 
-            url = reverse_querystring('follow-list', query_kwargs={'following': 'true'})
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            follows = Follow.objects.filter(follower=self.user_bob.profile).all()
-            serializer = FollowSerializer(follows, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        url = reverse_querystring('follow-list', query_kwargs={'following': 'true'})
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        follows = Follow.objects.filter(follower=self.user_bob.profile).all()
+        serializer = FollowSerializer(follows, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
 
-            url = reverse_querystring('follow-add-follow', query_kwargs={'username': self.user_susan.username})
-            response = self.client.post(url)
-            self.assertResponse400(response)
-            self.assertEqual(response.data, {'code': '6001', 'message': 'Follow already exist'})
+        url = reverse_querystring('follow-add-follow', query_kwargs={'username': self.user_susan.username})
+        response = self.client.post(url)
+        self.assertResponse400(response)
+        self.assertEqual(response.data, {'code': '6001', 'message': 'Follow already exist'})
+        self.client.force_authenticate()
 
     def test_follower_remove(self):
         url = reverse_querystring('follow-remove-follow', query_kwargs={'username': self.user_amy.username})
@@ -514,21 +534,22 @@ class FriendshipViewTests(BaseTestCase):
         response = self.client.post(url)
         self.assertResponse401(response)
 
-        with self.login(self.user_bob.username, self.user_pw):
-            # on POST
-            response = self.client.post(url)
-            self.assertResponse202(response)
-            self.assertEqual(response.data, {'message': 'Follower removed'})
+        self.client.force_authenticate(self.user_bob)
+        # on POST
+        response = self.client.post(url)
+        self.assertResponse202(response)
+        self.assertEqual(response.data, {'message': 'Follower removed'})
 
-            url = reverse_querystring('follow-list', query_kwargs={'following': 'true'})
-            response = self.client.get(url)
-            self.assertResponse200(response)
-            req = self.factory.get(url)
-            follows = Follow.objects.filter(follower=self.user_bob.profile).all()
-            serializer = FollowSerializer(follows, many=True, context={'request': req})
-            self.assertEqual(response.data, serializer.data)
+        url = reverse_querystring('follow-list', query_kwargs={'following': 'true'})
+        response = self.client.get(url)
+        self.assertResponse200(response)
+        req = self.factory.get(url)
+        follows = Follow.objects.filter(follower=self.user_bob.profile).all()
+        serializer = FollowSerializer(follows, many=True, context={'request': req})
+        self.assertEqual(response.data, serializer.data)
 
-            url = reverse_querystring('follow-remove-follow', query_kwargs={'username': self.user_amy.username})
-            response = self.client.post(url)
-            self.assertResponse400(response)
-            self.assertEqual(response.data, {'code': 6002, 'message': 'Follower doesn\'t exist'})
+        url = reverse_querystring('follow-remove-follow', query_kwargs={'username': self.user_amy.username})
+        response = self.client.post(url)
+        self.assertResponse400(response)
+        self.assertEqual(response.data, {'code': 6002, 'message': 'Follower doesn\'t exist'})
+        self.client.force_authenticate()

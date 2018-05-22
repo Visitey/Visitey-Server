@@ -5,16 +5,18 @@ from django.db.models import Count, Max
 from django.db.models.signals import post_save
 from django.utils.timezone import now, timedelta
 
+from rest_profile.models import Profile
+
 
 class Participant(models.Model):
     """
     The participant model holds a django.contrib.auth.models.User's id.
-    This allows us to use rest_messaging without querying the main db.
+    This allows us to use rest_chat without querying the main db.
     """
-    id = models.PositiveIntegerField(primary_key=True)
+    owner = models.OneToOneField(Profile, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{0}".format(self.id)
+        return "{0}".format(self.owner.pk)
 
 
 class ThreadManager(models.Manager):
@@ -66,14 +68,14 @@ class ThreadManager(models.Manager):
         # or create him if he does not exit
 
         participant_ids = list(participant_ids)
-        if request.rest_messaging_participant.id not in participant_ids:
-            participant_ids.append(request.rest_messaging_participant.id)
+        if request.participant.id not in participant_ids:
+            participant_ids.append(request.rest_chat_participant.id)
 
         # we need at least one other participant
         if len(participant_ids) < 2:
             raise Exception('At least two participants are required.')
 
-        if getattr(settings, "REST_MESSAGING_THREAD_UNIQUE_FOR_ACTIVE_RECIPIENTS", True) is True:
+        if getattr(settings, "REST_CHAT_THREAD_UNIQUE_FOR_ACTIVE_RECIPIENTS", True) is True:
             # if we limit the number of threads by active participants
             # we ensure a thread is not already running
             existing_threads = self.get_active_threads_involving_all_participants(*participant_ids)
@@ -88,7 +90,7 @@ class ThreadManager(models.Manager):
 
         # we send a signal to say the thread with participants is created
         post_save.send(Thread, instance=thread, created=True, created_and_add_participants=True,
-                       request_participant_id=request.rest_messaging_participant.id)
+                       request_participant_id=request.participant.id)
 
         return thread
 
@@ -122,7 +124,7 @@ class Thread(models.Model):
         By default, a user can add a participant if he himself is a participant.
         A callback can be added in the settings here.
         """
-        participants_ids_returned_by_callback = getattr(settings, 'REST_MESSAGING_ADD_PARTICIPANTS_CALLBACK',
+        participants_ids_returned_by_callback = getattr(settings, 'REST_CHAT_ADD_PARTICIPANTS_CALLBACK',
                                                         self._limit_participants)(request, *participants_ids)
         participations = []
         ids = []
@@ -132,7 +134,7 @@ class Thread(models.Model):
 
         Participation.objects.bulk_create(participations)
         post_save.send(Thread, instance=self, created=True, created_and_add_participants=True,
-                       request_participant_id=request.rest_messaging_participant.id)
+                       request_participant_id=request.rest_chat_participant.id)
 
         return ids
 
@@ -157,13 +159,13 @@ class Thread(models.Model):
             participation.save()
             post_save.send(Thread, instance=self, created=False, remove_participant=True,
                            removed_participant=participant,
-                           request_participant_id=request.rest_messaging_participant.id)
+                           request_participant_id=request.rest_chat_participant.id)
             return participation
         else:
             raise Exception('The participant may not be removed.')
 
     def get_removable_participants_ids(self, request):
-        removable_participants_ids = getattr(settings, 'REST_MESSAGING_REMOVE_PARTICIPANTS_CALLBACK',
+        removable_participants_ids = getattr(settings, 'REST_CHAT_REMOVE_PARTICIPANTS_CALLBACK',
                                              self._can_remove_oneself_only)(request, self)
         return removable_participants_ids
 
@@ -284,7 +286,7 @@ class Message(models.Model):
 
     def save(self, *args, **kwargs):
         """ Checks if there is a daily limit to the number of messages that can be sent. """
-        max_messages = getattr(settings, 'REST_MESSAGING_DAILY_LIMIT_CALLBACK',
+        max_messages = getattr(settings, 'REST_CHAT_DAILY_LIMIT_CALLBACK',
                                lambda message_instance, *args, **kwargs: None)(self, *args, **kwargs)
         if max_messages is None or Message.managers.return_daily_messages_count(self.sender) < max_messages:
             super(Message, self).save(*args, **kwargs)

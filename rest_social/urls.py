@@ -15,8 +15,7 @@ Including another URLconf
 """
 
 from django.conf.urls import url
-from rest_auth.tests.urls import TwitterLogin
-from rest_social.views import FacebookLogin
+from rest_social.views import FacebookLogin, TwitterLogin
 
 urlpatterns = [
     url(r'^facebook/$', FacebookLogin.as_view(), name='fb_login'),

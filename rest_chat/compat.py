@@ -3,11 +3,12 @@
 # vim: set fileencoding=utf8 :
 
 from __future__ import unicode_literals
+
 from django.conf import settings
 from rest_framework import VERSION, serializers
 from rest_framework.response import Response
-from rest_chat.pagination import MessagePagination
 
+from rest_chat.pagination import MessagePagination
 
 DRFVLIST = [int(x) for x in VERSION.split(".")]
 
