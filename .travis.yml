@@ -1,5 +1,5 @@
 PIPENV_IGNORE_VIRTUALENVS=1
- 
+
 addons:
   apt:
     update: true
