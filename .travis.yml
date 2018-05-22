@@ -20,6 +20,9 @@ language: python
 python:
   - 3.6.5
 
+install:
+  - pipenv install
+
 script:
   - python3 manage.py migrate
   - python3 manage.py test
