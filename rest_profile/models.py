@@ -9,7 +9,7 @@ from rest_htags.models import Htag
 
 
 class Profile(models.Model):
-    owner = models.OneToOneField('auth.User', on_delete=models.CASCADE, unique=True)
+    owner = models.OneToOneField('User', on_delete=models.CASCADE, unique=True)
     pseudo = models.CharField(max_length=100, default='', blank=True)
     img = models.ImageField(max_length=None, null=True, blank=True)
     desc = models.TextField(max_length=100, default='', blank=True)
@@ -24,10 +24,6 @@ class Profile(models.Model):
     # music
     def __str__(self):
         return self.owner.username
-
-    @property
-    def best_htags(self):
-        return self.myevents
 
 
 @receiver(post_save, sender=User)
