@@ -23,6 +23,7 @@ python:
 install:
   - pip install pipenv
   - pipenv install --dev
+  - pipenv run python3 manage.py migrate
 
 script:
   - pipenv run python3 manage.py test
