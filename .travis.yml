@@ -21,4 +21,4 @@ python:
   - 3.6.5
 
 script:
-  - python test.py
+  - python3 manage.py test
