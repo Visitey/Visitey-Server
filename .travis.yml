@@ -21,4 +21,4 @@ python:
   - 3.6.5
 
 script:
-  - python3 manage.py test
+  - pipenv run python3 manage.py test
