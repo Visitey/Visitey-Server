@@ -102,7 +102,6 @@ INSTALLED_APPS = [
     'rest_social.apps.RestSocialConfig',
     'rest_htags.apps.RestHtagsConfig',
     'rest_friendship.apps.RestFriendshipConfig',
-    'rest_chat.apps.RestChatConfig',
     'rest_auth',
     'rest_auth.registration',
 ]
