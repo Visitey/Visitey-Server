@@ -14,19 +14,11 @@ UserModel = get_user_model()
 
 class ProfileSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    best_htags = serializers.SerializerMethodField()
     img = Base64ImageField(required=False)
 
     class Meta:
         model = Profile
         fields = "__all__"
-
-    @staticmethod
-    def get_best_htags(obj):
-        c = Counter(obj.myevents.values_list('htags__name', flat=True))
-        c.most_common(5)
-        c = +c
-        return c.keys()
 
 
 class UserDetailsSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
