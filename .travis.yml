@@ -20,5 +20,9 @@ language: python
 python:
   - 3.6.5
 
-script:
+install:
+  - pip install pipenv
+  - pipenv install --dev
+
+test:
   - pipenv run python3 manage.py test
