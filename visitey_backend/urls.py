@@ -1,4 +1,4 @@
-"""RAPTA_end URL Configuration
+"""visitey URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -24,18 +24,17 @@ from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import refresh_jwt_token
 
-from rest_event.views import EventViewSet
 from rest_friendship.views import FriendshipViewSet, FriendshipRequestViewSet, FollowViewSet
 from rest_profile.views import ProfileViewSet
 
 # DOC VIEW
 schema_view = get_schema_view(
     openapi.Info(
-        title="RAPTA API",
+        title="visitey API",
         default_version='v1',
-        description="Api for rapta server",
+        description="Api for visitey server",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@rapta.fr"),
+        contact=openapi.Contact(email="contact@visitey.fr"),
         license=openapi.License(name="BSD License"),
     ),
     # validators=['flex', 'ssv'],
@@ -46,7 +45,6 @@ schema_view = get_schema_view(
 # Routers provide an easy way of automatically determining the URL conf.
 router = DefaultRouter()
 router.register(r'profile', ProfileViewSet)
-router.register(r'event', EventViewSet)
 router.register(r'friendship', FriendshipViewSet, base_name='friend')
 router.register(r'friendshiprequest', FriendshipRequestViewSet, base_name='friendshiprequest')
 router.register(r'follow', FollowViewSet, base_name='follow')
