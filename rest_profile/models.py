@@ -9,7 +9,7 @@ from rest_htags.models import Htag
 
 
 class Profile(models.Model):
-    owner = models.OneToOneField('User', on_delete=models.CASCADE, unique=True)
+    owner = models.OneToOneField('auth.User', on_delete=models.CASCADE, unique=True)
     pseudo = models.CharField(max_length=100, default='', blank=True)
     img = models.ImageField(max_length=None, null=True, blank=True)
     desc = models.TextField(max_length=100, default='', blank=True)

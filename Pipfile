@@ -22,7 +22,6 @@ Pillow = "*"
 "psycopg2-binary" = "*"
 responses = "*"
 django-extra-fields = "*"
-django-cors-headers = "*"
 
 [dev-packages]
 
