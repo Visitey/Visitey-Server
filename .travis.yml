@@ -23,6 +23,9 @@ python:
 services:
   - postgresql
 
+addons:
+  postgresql: "9.6"
+
 before_install:
   - sudo apt-get -y install gdal-bin
 
@@ -30,6 +33,7 @@ install:
   - pip3 install -r requirements.txt
 
 before_script:
+  - sudo apt-get install postgresql-9.6-postgis-2.3 postgis -y -q
   - psql -c "create extension postgis" -U postgres
   - psql -c "create database visiteydb;" -U postgres
   - psql -c "CREATE USER server WITH PASSWORD 'pass';" -U postgres
