@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Visitey/Visitey-Server.svg?branch=develop)](https://travis-ci.org/Visitey/Visitey-Server)
+
 # Python: Getting Started
 
 A barebones Django app, which can easily be deployed to Heroku.
