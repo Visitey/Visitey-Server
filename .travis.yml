@@ -24,7 +24,6 @@ services:
   - postgresql
 
 before_install:
-  - sudo apt-get -y install postgis
   - sudo apt-get -y install gdal-bin
 
 install:
