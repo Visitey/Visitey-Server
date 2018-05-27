@@ -1,10 +1,13 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
-Django = "*"
+
+django = "*"
 gunicorn = "*"
 django-heroku = "*"
 certifi = "*"
@@ -18,12 +21,17 @@ whitenoise = "*"
 django-taggit = "*"
 django-taggit-serializer = "*"
 drf-friendly-errors = "*"
-Pillow = "*"
+pillow = "*"
 "psycopg2-binary" = "*"
 responses = "*"
 django-extra-fields = "*"
+django-cors-headers = "*"
+
 
 [dev-packages]
 
+
+
 [requires]
+
 python_version = "3.6"

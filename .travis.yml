@@ -21,10 +21,9 @@ python:
   - 3.6.5
 
 install:
-  - pip3 install pipenv
-  - pipenv install
+  - pip3 install requirements.txt
 
 script:
-  - pipenv run python3 manage.py migrate
-  - pipenv run python3 manage.py test
+  - python3 manage.py migrate
+  - python3 manage.py test
 

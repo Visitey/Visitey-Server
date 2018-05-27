@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-sudo apt-get install postgresql
-sudo apt-get install postgis
-sudo apt-get install gdal-bin
+apt-get -y install postgresql
+apt-get -y install postgis
+apt-get -y install gdal-bin
