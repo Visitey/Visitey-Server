@@ -20,19 +20,21 @@ language: python
 python:
   - 3.6.5
 
+services:
+  - postgresql
+
 before_install:
-  - sudo apt-get remove -y postgresql-9.1
-  - sudo apt-get remove -y postgresql-9.2
-  - sudo apt-get remove -y postgresql-9.3
-  - sudo apt-get remove -y postgresql-9.4
-  - sudo apt-get update -qq
-  - sudo apt-get upgrade -qq -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
-  - sudo apt-get -y install postgresql
   - sudo apt-get -y install postgis
   - sudo apt-get -y install gdal-bin
 
 install:
   - pip3 install -r requirements.txt
+
+before_script:
+  - psql -c 'create database visiteydb;' -U postgres
+  - psql -c 'CREATE USER server WITH PASSWORD "pass";' -U postgres
+  - psql -c 'alter USER server WITH SUPERUSER;' -U postgres
+  - psql -c 'GRANT ALL ON DATABASE visiteydb  TO server;' -U postgres
 
 script:
   - python3 manage.py migrate
