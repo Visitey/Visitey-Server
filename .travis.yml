@@ -26,6 +26,10 @@ services:
 addons:
   postgresql: "9.5-10"
 
+env:
+  global:
+  - PGPORT=5433
+
 sudo: required
 
 before_install:
