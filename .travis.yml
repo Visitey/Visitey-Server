@@ -21,7 +21,7 @@ python:
   - 3.6.5
 
 install:
-  - pip3 install requirements.txt
+  - pip3 install -r requirements.txt
 
 script:
   - python3 manage.py migrate
