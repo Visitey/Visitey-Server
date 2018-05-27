@@ -20,9 +20,13 @@ language: python
 python:
   - 3.6.5
 
+before_install:
+  - sudo apt-get -y install postgresql
+  - sudo apt-get -y install postgis
+  - sudo apt-get -y install gdal-bin
+
 install:
   - pip3 install -r requirements.txt
-  - bash install_postgis.sh
 
 script:
   - python3 manage.py migrate
