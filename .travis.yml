@@ -20,16 +20,6 @@ language: python
 python:
   - 3.6.5
 
-services:
-  - postgresql
-
-addons:
-  postgresql: "9.5-10"
-
-env:
-  global:
-  - PGPORT=5433
-
 sudo: required
 
 before_install:
