@@ -30,10 +30,10 @@ install:
   - pip3 install -r requirements.txt
 
 before_script:
-  - psql -c 'create database visiteydb;' -U postgres
-  - psql -c 'CREATE USER server WITH PASSWORD pass;' -U postgres
-  - psql -c 'alter USER server WITH SUPERUSER;' -U postgres
-  - psql -c 'GRANT ALL ON DATABASE visiteydb  TO server;' -U postgres
+  - psql -c "create database visiteydb;" -U postgres
+  - psql -c "CREATE USER server WITH PASSWORD 'pass';" -U postgres
+  - psql -c "alter USER server WITH SUPERUSER;" -U postgres
+  - psql -c "GRANT ALL ON DATABASE visiteydb  TO server;" -U postgres
 
 script:
   - python3 manage.py migrate
