@@ -30,6 +30,7 @@ install:
   - pip3 install -r requirements.txt
 
 before_script:
+  - psql -c "create extension postgis" -U postgres
   - psql -c "create database visiteydb;" -U postgres
   - psql -c "CREATE USER server WITH PASSWORD 'pass';" -U postgres
   - psql -c "alter USER server WITH SUPERUSER;" -U postgres
