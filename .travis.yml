@@ -20,10 +20,27 @@ language: python
 python:
   - 3.6.5
 
-install:
-  - pip install pipenv
+addons:
+  postgresql: "9.5"
+  apt:
+    packages:
+      - postgresql-9.5-postgis-2.3
 
-jobs:
-  include:
-    - stage: Unit tests
-      script: python test.py
+sudo: required
+
+before_install:
+  - sudo apt-get -y install gdal-bin
+
+install:
+  - pip3 install -r requirements.txt
+
+before_script:
+  - psql -c "create extension postgis" -U postgres
+  - psql -c "create database visiteydb;" -U postgres
+  - psql -c "CREATE USER server WITH PASSWORD 'pass';" -U postgres
+  - psql -c "alter USER server WITH SUPERUSER;" -U postgres
+  - psql -c "GRANT ALL ON DATABASE visiteydb  TO server;" -U postgres
+
+script:
+  - python3 manage.py test
+
