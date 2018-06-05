@@ -1,16 +1,12 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
-django = "*"
 gunicorn = "*"
 django-heroku = "*"
-certifi = "*"
+certifi = ""
 drf-yasg = "*"
 django-allauth = "*"
 django-filter = "*"
@@ -21,17 +17,54 @@ whitenoise = "*"
 django-taggit = "*"
 django-taggit-serializer = "*"
 drf-friendly-errors = "*"
-pillow = "*"
 "psycopg2-binary" = "*"
 responses = "*"
 django-extra-fields = "*"
-django-cors-headers = "*"
-
+chardet = "*"
+click = "*"
+cookies = "*"
+coreapi = "*"
+coreschema = "*"
+coverage = "*"
+defusedxml = "*"
+dj-database-url = "*"
+django-nose = "*"
+flex = "*"
+future = "*"
+get = "*"
+idna = "*"
+inflection = "*"
+itypes = "*"
+jsonpointer = "*"
+jsonschema = "*"
+model-mommy = "*"
+nose = "*"
+oauthlib = "*"
+openapi-codec = "*"
+post = "*"
+"psycopg2" = "*"
+public = "*"
+"python3-openid" = "*"
+pytz = "*"
+requests = "*"
+requests-oauthlib = "*"
+"rfc3987" = "*"
+"ruamel.yaml" = "*"
+six = "*"
+"strict-rfc3339" = "*"
+swagger-spec-validator = "*"
+uritemplate = "*"
+"urllib3" = "*"
+validate-email = "*"
+Django = "*"
+Pillow = "*"
+"Jinja2" = "*"
+MarkupSafe = "*"
+PyJWT = "*"
+PyYAML = "*"
+query_string = "*"
 
 [dev-packages]
 
-
-
 [requires]
-
 python_version = "3.6"

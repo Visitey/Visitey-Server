@@ -37,7 +37,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="contact@visitey.fr"),
         license=openapi.License(name="BSD License"),
     ),
-    # validators=['flex', 'ssv'],
+    validators=['flex', 'ssv'],
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
@@ -48,10 +48,6 @@ router.register(r'profile', ProfileViewSet)
 router.register(r'friendship', FriendshipViewSet, base_name='friend')
 router.register(r'friendshiprequest', FriendshipRequestViewSet, base_name='friendshiprequest')
 router.register(r'follow', FollowViewSet, base_name='follow')
-# router.register(r'threads', ThreadView)
-# router.register(r'messages', MessageView, 'messages')
-# router.register(r'notifications', NotificationCheckView, 'notifications')
-# router.register(r'authentication', ParticipantAuthenticationView, 'authentication')
 
 urlpatterns = [
     url(r'^', include('rest_auth.urls')),
@@ -59,6 +55,7 @@ urlpatterns = [
     url(r'^registration/account-confirm-email/(?P<key>\w+)/$', allauthemailconfirmation, name="account_confirm_email"),
     url(r'^registration/', include('rest_auth.registration.urls')),
     url(r'^refresh-token/', refresh_jwt_token),
+
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', schema_view.with_ui('swagger', cache_timeout=None), name="schema-swagger-ui"),

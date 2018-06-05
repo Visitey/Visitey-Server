@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.test import TestCase, RequestFactory
 from django.utils.http import urlencode
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from rest_friendship.exceptions import AlreadyExistsError, AlreadyFriendsError
 from rest_friendship.models import Friend, Follow, FriendshipRequest
@@ -23,23 +23,7 @@ def reverse_querystring(view, urlconf=None, args=None, kwargs=None, current_app=
     return base_url
 
 
-class login(object):
-    def __init__(self, testcase, user, password):
-        self.testcase = testcase
-        success = testcase.client.login(username=user, password=password)
-        self.testcase.assertTrue(
-            success,
-            "login with username=%r, password=%r failed" % (user, password)
-        )
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, *args):
-        self.testcase.client.logout()
-
-
-class BaseTestCase(TestCase):
+class BaseTestCase(APITestCase):
 
     def setUp(self):
         """
@@ -58,9 +42,6 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         cache.clear()
         self.client.logout()
-
-    def login(self, user, password):
-        return login(self, user, password)
 
     def create_user(self, username, password, email_address):
         user = User.objects.create_user(username, password, email_address)
@@ -91,7 +72,7 @@ class BaseTestCase(TestCase):
 class FriendshipModelTests(BaseTestCase):
 
     def test_friendship_request(self):
-        ### Bob wants to be friends with Steve
+        # Bob wants to be friends with Steve
         req1 = Friend.objects.add_friend(self.user_bob.profile, self.user_steve.profile)
 
         # Ensure neither have friends already
