@@ -77,10 +77,10 @@ class ProfileViewTests(BaseTestCase):
             "events": [],
             "pseudo": "trololo",
             "desc": "Kappa",
-            "gender": "Male",
+            "gender": 'male',
             "birthdate": "2018-06-01T14:01:37Z",
             "phone_number": "0783316398",
-            "relationship": "binary",
+            "relationship": "Single",
             "rank": -1,
         }
 
@@ -95,7 +95,6 @@ class ProfileViewTests(BaseTestCase):
         req = self.factory.put(url)
         profile = Profile.objects.get(id=self.user_bob.profile.id)
         serializer = ProfileSerializer(profile, context={'request': req})
-        print(response.data)
         self.assertEqual(response.data, serializer.data)
         self.assertResponse200(response)
         self.client.force_authenticate()
