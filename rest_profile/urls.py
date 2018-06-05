@@ -13,27 +13,3 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-
-from django.conf.urls import url
-from rest_framework.urlpatterns import format_suffix_patterns
-
-from rest_profile.views import ProfileViewSet
-
-# profile_list = ProfileViewSet.as_view({
-#     'get': 'list',
-#     'post': 'create'
-# })
-#
-# profile_detail = ProfileViewSet.as_view({
-#     'get': 'retrieve',
-#     'put': 'update',
-#     'patch': 'partial_update',
-#     'delete': 'destroy'
-# })
-#
-# # API endpoints
-#
-# urlpatterns = format_suffix_patterns([
-#     url('^profiles/$', profile_list, name='profile-list'),
-#     url('^profiles/(?P<pk>[0-9]+)/$', profile_detail, name='profile-detail'),
-# ])

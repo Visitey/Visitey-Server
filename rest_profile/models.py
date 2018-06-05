@@ -1,29 +1,41 @@
 # Create your models here.
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-
-from rest_htags.models import Htag
+from rest_framework.reverse import reverse
 
 
 class Profile(models.Model):
-    owner = models.OneToOneField('auth.User', on_delete=models.CASCADE, unique=True)
-    pseudo = models.CharField(max_length=100, default='', blank=True)
+    """ Profile model representation """
+    gender_regex = RegexValidator(regex=r'^male$|^female$', message="Gender must be 'male' or 'female'")
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
+                                 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits "
+                                         "allowed.")
+    relationship_regex = RegexValidator(regex=r"^single$|^in a relationship$|^engaged$|^married$|^it's "
+                                              r"complicated$|^in an open "
+                                              r"relationship$|^widowed$|^separated$|^divorced$|^in a civil union$",
+                                        message="Relationship must be : 'Single', 'In a Relationship', 'Engaged', "
+                                                "'Married', 'It's Complicated', 'In an Open Relationship', 'Widowed', "
+                                                "'Separated', 'Divorced', 'In a Civil Union,'")
+
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+    pseudo = models.CharField(max_length=15, default='', blank=True)
     img = models.ImageField(max_length=None, null=True, blank=True)
     desc = models.TextField(max_length=100, default='', blank=True)
-    gender = models.CharField(max_length=100, default='male', blank=True)
+    gender = models.CharField(max_length=6, default='', validators=[gender_regex])
     birthdate = models.DateTimeField('birthdate', default=timezone.now)
-    phone_number = models.CharField(max_length=100, default='', blank=True)
-    relationship = models.CharField(max_length=100, default='', blank=True)
+    phone_number = models.CharField(max_length=17, default='', blank=True, validators=[phone_regex])
+    relationship = models.CharField(max_length=40, default='', blank=True)
     rank = models.IntegerField(default=0)
-    blacklist = models.ManyToManyField('self', default=None)
 
-    # joinMe
-    # music
     def __str__(self):
-        return self.owner.username
+        return self.pseudo
+
+    def get_absolute_url(self):
+        return reverse('profile-detail', args=[str(self.id)])
 
 
 @receiver(post_save, sender=User)
