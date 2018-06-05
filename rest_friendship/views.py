@@ -19,7 +19,20 @@ class FriendshipRequestViewSet(viewsets.ModelViewSet):
     """
         This viewset automatically provides `list`, `create`, `retrieve`,
         `update` and `destroy` actions.
-        """
+
+          parameters:
+            - name: rejected
+            in: query
+            type: string
+            description: FriendshipRequests rejected
+
+            - name: sent
+            in: query
+            type: string
+            required: true
+            description: FriendshipRequests send
+    """
+
     serializer_class = FriendshipRequestSerializer
 
     def get_queryset(self):
@@ -38,7 +51,15 @@ class FriendshipRequestViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_name='accept-request', url_path='accept_request')
     def friendship_accept(self, arg):
-        """ Accept a friendship request """
+        """
+            Accept a friendship request
+
+              parameters:
+                - name: request_id
+                in: query
+                type: int
+                description: FriendshipRequests id
+        """
         friendship_request_id = int(self.request.query_params.get('request_id', None))
         if friendship_request_id is not None:
             request = get_object_or_404(Profile, owner=self.request.user)
@@ -56,7 +77,15 @@ class FriendshipRequestViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_name='reject-request', url_path='reject_request')
     def friendship_reject(self, arg):
-        """ Reject a friendship request """
+        """
+            Reject a friendship request
+
+              parameters:
+                - name: request_id
+                in: query
+                type: int
+                description: FriendshipRequests id
+        """
         friendship_request_id = int(self.request.query_params.get('request_id', None))
         if friendship_request_id is not None:
             request = get_object_or_404(Profile, owner=self.request.user)
@@ -74,7 +103,15 @@ class FriendshipRequestViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_name='cancel-request', url_path='cancel_request')
     def friendship_cancel(self, arg):
-        """ Cancel a friendship request """
+        """
+            Cancel a friendship request
+
+              parameters:
+                - name: request_id
+                in: query
+                type: int
+                description: FriendshipRequests id
+        """
         friendship_request_id = int(self.request.query_params.get('request_id', None))
         if friendship_request_id is not None:
             request = get_object_or_404(Profile, owner=self.request.user)
@@ -105,7 +142,15 @@ class FriendshipViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_name='add-friend', url_path='add_friend')
     def friendship_add_friend(self, arg):
-        """ Create a FriendshipRequest """
+        """
+            Create a FriendshipRequest
+
+              parameters:
+                - name: username
+                in: query
+                type: string
+                description: friend username
+        """
         to_username = self.request.query_params.get('username', None)
         from_user = get_object_or_404(Profile, owner=self.request.user)
         if to_username is not None:
@@ -130,7 +175,13 @@ class FollowViewSet(viewsets.ModelViewSet):
     """
         This viewset automatically provides `list`, `create`, `retrieve`,
         `update` and `destroy` actions.
-        """
+
+          parameters:
+            - name: following
+            in: query
+            type: bool
+            description: Return follows
+    """
     serializer_class = FollowSerializer
 
     def get_queryset(self):
@@ -147,7 +198,15 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_name='add-follow', url_path='add_follow')
     def follower_add(self, arg):
-        """ Create a following relationship """
+        """
+            Create a following relationship
+
+              parameters:
+                - name: username
+                in: query
+                type: int
+                description: username of who you whant follow
+        """
         to_username = self.request.query_params.get('username', None)
         follower = get_object_or_404(Profile, owner=self.request.user)
         if to_username is not None:
@@ -168,7 +227,15 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_name='remove-follow', url_path='remove_follow')
     def follower_remove(self, arg):
-        """ Remove a following relationship """
+        """
+            Remove a following relationship
+
+              parameters:
+                - name: username
+                in: query
+                type: int
+                description: remove username follow
+        """
         to_username = self.request.query_params.get('username', None)
         follower = get_object_or_404(Profile, owner=self.request.user)
         if to_username is not None:

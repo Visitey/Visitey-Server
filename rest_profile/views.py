@@ -11,6 +11,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update`, and `destroy` actions.
+
+      parameters:
+        - name: owner
+        in: query
+        type: int
+        description: Profile owner username
     """
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -22,8 +28,4 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        owner = self.request.query_params.get('owner', None)
-        if owner is not None:
-            return Profile.objects.filter(owner__username=owner)
-        else:
-            return Profile.objects.all()
+        return Profile.objects.filter(owner=self.request.user)

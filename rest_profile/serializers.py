@@ -6,6 +6,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework_friendly_errors.mixins import FriendlyErrorMessagesMixin
 
+
 from rest_profile.models import Profile
 
 # Get the UserModel

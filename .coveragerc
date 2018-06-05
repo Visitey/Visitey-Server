@@ -1,0 +1,9 @@
+# .coveragerc to control coverage.py
+[run]
+omit=*migrations*, *admin*, *apps*, *__init__*
+
+[report]
+omit = */migrations/*, *admin*, *apps*, *__init__*
+
+[html]
+directory = coverage_html
