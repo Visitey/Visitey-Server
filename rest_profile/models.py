@@ -32,7 +32,7 @@ class Profile(models.Model):
     rank = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.pseudo
+        return self.pseudo + ' - ' + self.owner.username
 
     def get_absolute_url(self):
         return reverse('profile-detail', args=[str(self.id)])
