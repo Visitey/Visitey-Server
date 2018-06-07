@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import datetime
 import os
 
-import dj_database_url
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -114,6 +112,7 @@ INSTALLED_APPS = [
     'rest_social.apps.RestSocialConfig',
     'rest_htags.apps.RestHtagsConfig',
     'rest_friendship.apps.RestFriendshipConfig',
+    'rest_geo.apps.RestGeoConfig',
     'rest_auth',
     'rest_auth.registration',
 ]
@@ -207,13 +206,23 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-REST_SESSION_LOGIN = False
+# Emails
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Login
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # TODO mandatory
+LOGIN_REDIRECT_URL = "/"
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -243,8 +252,8 @@ WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-#DATABASES['default'] = dj_database_url.config()
-#DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+# DATABASES['default'] = dj_database_url.config()
+# DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')

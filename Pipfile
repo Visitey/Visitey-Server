@@ -63,6 +63,7 @@ MarkupSafe = "*"
 PyJWT = "*"
 PyYAML = "*"
 query_string = "*"
+python-decouple = "*"
 
 [dev-packages]
 
