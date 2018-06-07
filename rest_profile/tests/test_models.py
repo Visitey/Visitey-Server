@@ -60,7 +60,7 @@ class ProfileModelTests(BaseTestCase):
 
     def test_object_name(self):
         profile = Profile.objects.get(id=self.user_bob.profile.id)
-        expected_object_name = '%s' % profile.pseudo
+        expected_object_name = '%s' % profile.pseudo + ' - ' + profile.owner.username
         self.assertEquals(expected_object_name, str(profile))
 
     def test_get_absolute_url(self):
