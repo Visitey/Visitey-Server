@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from rest_framework_friendly_errors.mixins import FriendlyErrorMessagesMixin
 
+from rest_framework_friendly_errors.mixins import SerializerErrorMessagesMixin
 from rest_friendship.models import Friend, FriendshipRequest, Follow
 from rest_profile.models import Profile
 
 
-class FriendshipSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class FriendshipSerializer(SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     to_user = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail',
                                                   queryset=Profile.objects.all())
     from_user = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail',
@@ -17,7 +17,7 @@ class FriendshipSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedMo
         fields = "__all__"
 
 
-class FriendshipRequestSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class FriendshipRequestSerializer(SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     to_user = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail',
                                                   queryset=Profile.objects.all())
     from_user = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail',
@@ -29,7 +29,7 @@ class FriendshipRequestSerializer(FriendlyErrorMessagesMixin, serializers.Hyperl
         fields = "__all__"
 
 
-class FollowSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class FollowSerializer(SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     follower = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail',
                                                    queryset=Profile.objects.all())
     followee = serializers.HyperlinkedRelatedField(many=False, view_name='profile-detail',

@@ -55,7 +55,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
     'EXCEPTION_HANDLER':
-        'rest_framework_friendly_errors.handlers.friendly_exception_handler'
+        'rest_framework_friendly_errors.handlers.drf_exception_handler'
 }
 
 # REST AUTH CUSTOM SERIALIZERS
@@ -71,10 +71,11 @@ SITE_ID = 1
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# Tell nose to measure coverage on the 'foo' and 'bar' apps
+# Tell nose arguments
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=rest_profile, rest_friendship',
+    '--cover-package=rest_profile, rest_friendship, rest_geo',
+    '--nocapture'
 ]
 
 # Application definition
@@ -114,6 +115,7 @@ INSTALLED_APPS = [
     'rest_social.apps.RestSocialConfig',
     'rest_htags.apps.RestHtagsConfig',
     'rest_friendship.apps.RestFriendshipConfig',
+    'rest_geo.apps.RestGeoConfig',
     'rest_auth',
     'rest_auth.registration',
 ]
@@ -207,13 +209,23 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-REST_SESSION_LOGIN = False
+# Emails
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Login
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # TODO mandatory
+LOGIN_REDIRECT_URL = "/"
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
