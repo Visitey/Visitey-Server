@@ -134,12 +134,10 @@ class ProfileViewTests(BaseTestCase):
         self.client.force_authenticate(self.user_bob)
         response = self.client.put(url, put_profile)
         self.assertResponse400(response)
-        self.assertEqual(response.data, {'code': ErrorDetail(string='1000', code='invalid'),
-                                         'message': ErrorDetail(string='Validation Failed', code='invalid'),
-                                         'errors': [{'code': ErrorDetail(string='3006', code='invalid'),
-                                                     'field': ErrorDetail(string='gender', code='invalid'),
-                                                     'message': ErrorDetail(string="Gender must be 'male' or 'female'",
-                                                                            code='invalid')}]})
+        self.assertEqual(response.data, {'errors': {'gender': [{'code': ErrorDetail(string='invalid', code='invalid'),
+                                                                'message': ErrorDetail(string="Gender must be 'male' "
+                                                                                              "or 'female'",
+                                                                                       code='invalid')}]}})
         self.client.force_authenticate()
 
     def test_validator_phone_number(self):
@@ -160,14 +158,14 @@ class ProfileViewTests(BaseTestCase):
         self.client.force_authenticate(self.user_bob)
         response = self.client.put(url, put_profile)
         self.assertResponse400(response)
-        self.assertEqual(response.data, {'code': ErrorDetail(string='1000', code='invalid'),
-                                         'message': ErrorDetail(string='Validation Failed', code='invalid'),
-                                         'errors': [{'code': ErrorDetail(string='3006', code='invalid'),
-                                                     'field': ErrorDetail(string='phone_number', code='invalid'),
-                                                     'message': ErrorDetail(
-                                                         string="Phone number must be entered in the format: "
-                                                                "'+999999999'. Up to 15 digits allowed.",
-                                                         code='invalid')}]})
+        self.assertEqual(response.data, {'errors': {'phone_number': [{'code': ErrorDetail(string='invalid', code='invalid'),
+                                                                      'message': ErrorDetail(string="Phone number "
+                                                                                                    "must be entered "
+                                                                                                    "in the format: "
+                                                                                                    "'+999999999'. Up "
+                                                                                                    "to 15 digits "
+                                                                                                    "allowed.",
+                                                                                             code='invalid')}]}})
         self.client.force_authenticate()
 
     def test_validator_relationship(self):
@@ -188,15 +186,22 @@ class ProfileViewTests(BaseTestCase):
         self.client.force_authenticate(self.user_bob)
         response = self.client.put(url, put_profile)
         self.assertResponse400(response)
-        self.assertEqual(response.data, {'code': ErrorDetail(string='1000', code='invalid'),
-                                         'message': ErrorDetail(string='Validation Failed', code='invalid'),
-                                         'errors': [{'code': ErrorDetail(string='3006', code='invalid'),
-                                                     'field': ErrorDetail(string='relationship', code='invalid'),
-                                                     'message': ErrorDetail(string="Relationship must be : 'Single',"
-                                                                                   "'In a Relationship', 'Engaged', "
-                                                                                   "'Married', 'It's Complicated', "
-                                                                                   "'In an Open Relationship', "
-                                                                                   "'Widowed', 'Separated', "
-                                                                                   "'Divorced', 'In a Civil Union,'",
-                                                                            code='invalid')}]})
+        self.assertEqual(response.data, {'errors': {'relationship': [{'code': ErrorDetail(string='invalid', code='invalid'),
+                                                                      'message': ErrorDetail(string="Relationship "
+                                                                                                    "must be : "
+                                                                                                    "'Single',"
+                                                                                                    "'In a "
+                                                                                                    "Relationship', "
+                                                                                                    "'Engaged', "
+                                                                                                    "'Married', "
+                                                                                                    "'It's "
+                                                                                                    "Complicated', "
+                                                                                                    "'In an Open "
+                                                                                                    "Relationship', "
+                                                                                                    "'Widowed', "
+                                                                                                    "'Separated', "
+                                                                                                    "'Divorced', "
+                                                                                                    "'In a Civil "
+                                                                                                    "Union,'",
+                                                                                             code='invalid')}]}})
         self.client.force_authenticate()
