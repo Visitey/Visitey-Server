@@ -36,9 +36,9 @@ JWT_AUTH = {
 # Make JWT Auth the default authentication mechanism for Django
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -69,10 +69,11 @@ SITE_ID = 1
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# Tell nose to measure coverage on the 'foo' and 'bar' apps
+# Tell nose arguments
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=rest_profile, rest_friendship',
+    '--cover-package=rest_profile, rest_friendship, rest_geo',
+    '--nocapture'
 ]
 
 # Application definition

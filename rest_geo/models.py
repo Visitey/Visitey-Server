@@ -14,7 +14,7 @@ class PointOfInterest(models.Model):
     description = models.TextField(max_length=500, blank=True, null=True)
     location = models.PointField()
     img = models.ImageField(max_length=None, null=True, blank=True)
-    htags = TaggableManager(blank=False, through=Htags)
+    htags = TaggableManager(blank=True, through=Htags)
 
     def __str__(self):
         return self.title
@@ -35,7 +35,7 @@ class Route(models.Model):
     description = models.TextField(max_length=500, blank=True, null=True)
     img = models.ImageField(max_length=None, null=True, blank=True)
     points = models.ManyToManyField(PointOfInterest, related_name='routes')
-    htags = TaggableManager(blank=False, through=Htags)
+    htags = TaggableManager(blank=True, through=Htags)
 
     def __str__(self):
         return self.title
