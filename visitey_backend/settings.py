@@ -53,7 +53,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
     'EXCEPTION_HANDLER':
-        'rest_framework_friendly_errors.handlers.friendly_exception_handler'
+        'rest_framework_friendly_errors.handlers.drf_exception_handler'
 }
 
 # REST AUTH CUSTOM SERIALIZERS

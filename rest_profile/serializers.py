@@ -4,7 +4,7 @@ from collections import Counter
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework_friendly_errors.mixins import FriendlyErrorMessagesMixin
+from rest_framework_friendly_errors.mixins import SerializerErrorMessagesMixin
 
 
 from rest_profile.models import Profile
@@ -13,7 +13,7 @@ from rest_profile.models import Profile
 UserModel = get_user_model()
 
 
-class ProfileSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class ProfileSerializer(SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     img = Base64ImageField(required=False)
 
@@ -22,7 +22,7 @@ class ProfileSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModel
         fields = "__all__"
 
 
-class UserDetailsSerializer(FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class UserDetailsSerializer(SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     profile = ProfileSerializer(many=False)
 
     class Meta:

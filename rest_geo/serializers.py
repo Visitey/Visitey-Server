@@ -3,13 +3,13 @@
 from drf_extra_fields.fields import Base64ImageField
 from drf_extra_fields.geo_fields import PointField
 from rest_framework import serializers
-from rest_framework_friendly_errors.mixins import FriendlyErrorMessagesMixin
+from rest_framework_friendly_errors.mixins import SerializerErrorMessagesMixin
 from taggit_serializer.serializers import TaggitSerializer, TagListSerializerField
 
 from rest_geo.models import PointOfInterest, Route
 
 
-class PointOfInterestSerializer(TaggitSerializer, FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class PointOfInterestSerializer(TaggitSerializer, SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     img = Base64ImageField(required=False)
     id = serializers.ReadOnlyField()
     htags = TagListSerializerField()
@@ -20,7 +20,7 @@ class PointOfInterestSerializer(TaggitSerializer, FriendlyErrorMessagesMixin, se
         fields = "__all__"
 
 
-class RouteSerializer(TaggitSerializer, FriendlyErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
+class RouteSerializer(TaggitSerializer, SerializerErrorMessagesMixin, serializers.HyperlinkedModelSerializer):
     img = Base64ImageField(required=False)
     htags = TagListSerializerField()
     location = PointField(required=False)
