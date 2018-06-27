@@ -41,7 +41,6 @@ before_script:
   - psql -c "alter USER server WITH SUPERUSER;" -U postgres
   - psql -c "GRANT ALL ON DATABASE visiteydb  TO server;" -U postgres
   - python3 manage.py makemigrations
-  - python3 manage.py migrate
 
 script:
   - python3 manage.py test
