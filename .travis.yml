@@ -40,7 +40,7 @@ before_script:
   - psql -c "CREATE USER server WITH PASSWORD 'pass';" -U postgres
   - psql -c "alter USER server WITH SUPERUSER;" -U postgres
   - psql -c "GRANT ALL ON DATABASE visiteydb  TO server;" -U postgres
-  
+
 script:
   - python3 manage.py test
 
