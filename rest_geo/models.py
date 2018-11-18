@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 # Create your models here.
@@ -5,6 +7,11 @@ from rest_framework.reverse import reverse
 from taggit.managers import TaggableManager
 
 from rest_htags.models import Htags
+
+
+class RouteType(Enum):   # A subclass of Enum
+    TR = "Chasse au trésor"
+    PR = "Parcour"
 
 
 class PointOfInterest(models.Model):
@@ -27,12 +34,14 @@ class PointOfInterest(models.Model):
         verbose_name_plural = _('PointOfInterest')
         ordering = ('title',)
 
-
 class Route(models.Model):
     """ Model to represent Routes """
 
     title = models.CharField(max_length=60)
     description = models.TextField(max_length=500, blank=True, null=True)
+    short_desc = models.TextField(max_lenth = 200, blank= False, null=False)
+    zone = models.TextField(max_lenth = 20, blank= False, null=False)
+    type = models.CharField(max_length=15, choices = [(tag, tag.value) for tag in RouteType])  # Choices is a list of Tuple
     img = models.ImageField(max_length=None, null=True, blank=True)
     points = models.ManyToManyField(PointOfInterest, related_name='routes')
     htags = TaggableManager(blank=True, through=Htags)
